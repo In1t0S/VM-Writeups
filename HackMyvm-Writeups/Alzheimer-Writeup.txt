@@ -7,7 +7,7 @@
 
 
 --> nmap 
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# nmap -sV -sC -p- -A -T4 10.0.2.49 
     Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-05-21 09:30 EDT
     Nmap scan report for 10.0.2.49
@@ -55,7 +55,7 @@
 --> ftp 
       - We can login ftp as an Anonymous user.
    
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# ftp Anonymous@10.0.2.49                                                                                          
     Connected to 10.0.2.49.
     220 (vsFTPd 3.0.3)
@@ -83,7 +83,7 @@ ftp> exit
 
       - We found a .secretnote.txt file we can download it into our local machine and inspect further.
 
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# cat .secretnote.txt 
     I need to knock this ports and 
     one door will be open!
@@ -97,7 +97,7 @@ ftp> exit
 --> konck 
       - Let's knock the ports as sugested in the text file we found.
     
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# knock -v 10.0.2.49 1000 2000 3000 -d 1000
     hitting tcp 10.0.2.49:1000
     hitting tcp 10.0.2.49:2000
@@ -105,7 +105,7 @@ ftp> exit
 
       - Knocked 1000, 2000, 3000 ports and later that lets check the ports with nmap again.
 
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# nmap -sVC -p- -A 10.0.2.49       
     Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-05-21 09:36 EDT
     Nmap scan report for 10.0.2.49
@@ -150,7 +150,7 @@ ftp> exit
 
 
 --> gobuster 
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# gobuster dir -u http://10.0.2.49 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -x html,php,txt
     ===============================================================
     Gobuster v3.6
@@ -179,7 +179,7 @@ ftp> exit
 
       - let's check the scan results in the webpage.
     
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# curl http://10.0.2.49
     I dont remember where I stored my password :(
     I only remember that was into a .txt file...
@@ -189,16 +189,16 @@ ftp> exit
 
       - Username is medusa note it down.
 
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# curl http://10.0.2.49/home/
     Maybe my pass is at home!
     -medusa
 
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# curl http://10.0.2.49/secret/
     Maybe my password is in this secret folder?
 
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# curl http://10.0.2.49/secret/home/
     Im trying a lot. Im sure that i will recover my pass!
     -medusa
@@ -209,7 +209,7 @@ ftp> exit
 
 
 --> ssh login and Privilege Escalation
-    ─(root㉿kali)-[/home/s3r4ph]
+    ─(root㉿kali)-[*]
     └─# ssh medusa@10.0.2.49                       
     The authenticity of host '10.0.2.49 (10.0.2.49)' can't be established.
     ED25519 key fingerprint is SHA256:O2S8HAtlJxSTJJgIQUiIzsbSKX/qj9Thyn38JM6wsBY.
